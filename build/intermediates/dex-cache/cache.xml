@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/pre-dexed/debug/classes-5de9f0a5db8f2e0948f13e9a6ecd7b48535f23a3.jar" />
+    </item>
+    <item
+        jar="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/pre-dexed/debug/classes-8b78e339af694a5035cef5dd38ba0abfbb46e70e.jar" />
+    </item>
+    <item
+        jar="/home/sgondala/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-0631862deb9012d06941b44e62a54410c198233a.jar" />
+    </item>
+    <item
+        jar="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="/home/sgondala/AndroidStudioProjects/BubbleNote/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-2da3fabb74ed0f9d053ad2f29e9c256f7d0cf617.jar" />
+    </item>
+
+</items>
