@@ -69,4 +69,9 @@ public class ChatAdapter extends ArrayAdapter<DataProvider> {
         CHAT_TXT.setLayoutParams(params);
         return convertView;
     }
+
+    public void removeItem(int position){
+        chatList.remove(position);
+        notifyDataSetChanged();
+    }
 }

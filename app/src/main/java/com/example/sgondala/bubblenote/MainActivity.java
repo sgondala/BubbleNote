@@ -1,16 +1,21 @@
 package com.example.sgondala.bubblenote;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -21,6 +26,8 @@ public class MainActivity extends ActionBarActivity {
     boolean position = false;
     ChatAdapter adapter;
     Context ctx = this;
+    DBHelper ourHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +43,33 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onChanged() {
                 super.onChanged();
-                listView.setSelection(adapter.getCount()-1);
+                listView.setSelection(adapter.getCount() - 1);
             }
         });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.add(new DataProvider(position, chat_text.getText().toString()));
-                position = !position;
-                chat_text.setText("");
+                String chatTextMessage = chat_text.getText().toString();
+                if (!chatTextMessage.isEmpty()) {
+                    adapter.add(new DataProvider(position, chat_text.getText().toString()));
+                    position = !position;
+                    DatabaseOperations DB = new DatabaseOperations(ctx);
+                    DB.putInformation(DB, chat_text.getText().toString());
+                    chat_text.setText("");
+                }
+
             }
         });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                deleteMessage(position);
+                return true;
+            }
+        });
+
+        generatePrevious();
     }
 
 
@@ -70,5 +93,29 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void generatePrevious(){
+        DatabaseOperations dop = new DatabaseOperations(ctx);
+        Cursor cr = dop.getInformation(dop);
+        int count = cr.getCount();
+        if(count!=0){
+            cr.moveToFirst();
+            do{
+                String message = cr.getString(0);
+                adapter.add(new DataProvider(position, message));
+                position = !position;
+                System.out.println(message);
+            }
+            while(cr.moveToNext());
+        }
+    }
+
+    public void deleteMessage(int position){
+        DataProvider dp = adapter.getItem(position);
+        adapter.removeItem(position);
+        String messageSelected = dp.message;
+        DatabaseOperations dop = new DatabaseOperations(ctx);
+        dop.deleteMessage(dop, messageSelected);
     }
 }

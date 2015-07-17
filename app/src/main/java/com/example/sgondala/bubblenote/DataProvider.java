@@ -12,4 +12,5 @@ public class DataProvider {
         this.position = position;
         this.message  = message;
     }
+
 }
