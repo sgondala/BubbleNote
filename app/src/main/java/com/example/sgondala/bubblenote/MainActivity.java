@@ -3,22 +3,20 @@ package com.example.sgondala.bubblenote;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -31,7 +29,8 @@ public class MainActivity extends ActionBarActivity {
     ChatAdapter adapter;
     Context ctx = this;
     DBHelper ourHelper;
-
+    ActionMode.Callback mActionModeCallback;
+    List<Integer> listOfItemsToBeDeleted = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,78 +63,44 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                ActionMode mActionMode = startActionMode(new ActionMode.Callback() {
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.setTitle("Selected");
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                listOfItemsToBeDeleted.add(position);
+            }
 
-                        MenuInflater inflator = mode.getMenuInflater();
-                        inflator.inflate(R.menu.action_menu, menu);
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        switch (item.getItemId()){
-                            case R.id.action_delete:
-                                deleteMessage(position);
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-
-                    }
-                });
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.action_menu,menu);
                 return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.action_delete:
+                        deleteAllMessages();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
             }
         });
 
-
-//        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-//            @Override
-//            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-//
-//            }
-//
-//            @Override
-//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onDestroyActionMode(ActionMode mode) {
-//
-//            }
-//        });
-//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                deleteMessage(position);
-//                return true;
-//            }
-//        });
-//        registerForContextMenu(listView);
         generatePrevious();
     }
 
@@ -161,19 +126,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v,
-//                                    ContextMenu.ContextMenuInfo menuInfo) {
-//        super.onCreateContextMenu(menu, v, menuInfo);
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main_context_menu, menu);
-//    }
-//
-//    @Override
-//    public boolean onContextItemSelected(MenuItem item) {
-//        return super.onContextItemSelected(item);
-//    }
-
     public void generatePrevious(){
         DatabaseOperations dop = new DatabaseOperations(ctx);
         Cursor cr = dop.getInformation(dop);
@@ -196,5 +148,13 @@ public class MainActivity extends ActionBarActivity {
         String messageSelected = dp.message;
         DatabaseOperations dop = new DatabaseOperations(ctx);
         dop.deleteMessage(dop, messageSelected);
+    }
+
+    public void deleteAllMessages(){
+        Collections.sort(listOfItemsToBeDeleted, Collections.reverseOrder());
+        for(Integer i : listOfItemsToBeDeleted){
+            deleteMessage(i);
+        }
+        listOfItemsToBeDeleted = new ArrayList<Integer>();
     }
 }
